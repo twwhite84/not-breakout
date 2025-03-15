@@ -10,6 +10,7 @@ To run:
 - Create a .venv virtual environment
 - Install the packages from the requirements.txt manifest
 - python main.py
+- Arrow keys to move paddle, Escape to quit
 
 TODO:
 - Implement finite state machine
