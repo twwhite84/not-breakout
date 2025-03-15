@@ -19,7 +19,7 @@ class Main:
 
         sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO)
         self.window = sdl2.SDL_CreateWindow(
-            b"Pykanoid",
+            b"Not Breakout",
             sdl2.SDL_WINDOWPOS_CENTERED,
             sdl2.SDL_WINDOWPOS_CENTERED,
             self.SCREEN_WIDTH,
