@@ -188,11 +188,11 @@ class Main:
         self.ball.y += int(self.ball.direction.y * self.ball.speed * et)
 
     def render(self) -> None:
-        # -- screen
+        # -- clear screen
         sdl2.SDL_SetRenderDrawColor(self.renderer, *Colors.BLACK)
         sdl2.SDL_RenderClear(self.renderer)
 
-        # -- block
+        # -- draw renderables
         for item in self.renderables:
             if isinstance(item, Iterable):
                 for subitem in item:
