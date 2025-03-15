@@ -102,19 +102,17 @@ class Main:
         else:
             return False
 
-    def findStruckSide(self, ball: Ball, obstacle: GameObject) -> Hitside:
-
-        ang_range_side = math.atan2(obstacle.h, obstacle.w) * (180 / math.pi)
-
+    def findHitside(self, ball: Ball, obstacle: GameObject) -> Hitside:
         dy = ball.y - obstacle.y
         dx = ball.x - obstacle.x
-        ang = int(math.atan2(dy, dx) * (180 / math.pi))
+        ang_side_portion = math.atan2(obstacle.h, obstacle.w)
+        ang = math.atan2(dy, dx)
 
-        if ang > (-180 + ang_range_side) and ang <= (0 - ang_range_side):
+        if ang > (-math.pi + ang_side_portion) and ang <= (-ang_side_portion):
             return Hitside.top
-        if ang > (0 + ang_range_side) and ang <= (180 - ang_range_side):
+        if ang > (ang_side_portion) and ang <= (math.pi - ang_side_portion):
             return Hitside.bottom
-        if ang > (0 - ang_range_side) and ang <= (0 + ang_range_side):
+        if ang > (-ang_side_portion) and ang <= (ang_side_portion):
             return Hitside.right
         return Hitside.left
 
@@ -176,12 +174,12 @@ class Main:
 
         # ball collision -- player
         if self.isCollision(self.ball, self.player):
-            self.bounce(self.ball, self.findStruckSide(self.ball, self.player))
+            self.bounce(self.ball, self.findHitside(self.ball, self.player))
 
         # ball collision -- block
         for block in self.blocks:
             if self.isCollision(self.ball, block):
-                self.bounce(self.ball, self.findStruckSide(self.ball, block))
+                self.bounce(self.ball, self.findHitside(self.ball, block))
                 cast(list, self.blocks).remove(block)
                 break
 
