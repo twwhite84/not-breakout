@@ -9,3 +9,5 @@ To run:
 - Create a .venv virtual environment
 - Install the packages from the requirements.txt manifest
 - python main.py
+
+![A screenshot of a computer Description automatically generated](media/screenshot.png)
