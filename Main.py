@@ -135,8 +135,8 @@ class Main:
             x.direction.x *= -1
 
     def processEvents(self) -> None:
-        while sdl2.SDL_PollEvent(ctypes.byref(self.event)) != 0:
-            if self.event.type == sdl2.SDL_Quit:
+        while sdl2.SDL_PollEvent(ctypes.byref(self.event)):
+            if self.event.type == sdl2.SDL_QUIT:
                 self.running = False
                 break
 
@@ -151,6 +151,13 @@ class Main:
         if currentKeyStates[sdl2.SDL_SCANCODE_RIGHT]:
             if not self.player.x + (0.5 * self.player.w) >= self.SCREEN_WIDTH:
                 self.player.x += self.player.speed * et
+
+        if currentKeyStates[sdl2.SDL_SCANCODE_ESCAPE]:
+            # this could instead just be self.running = False
+            # but I want to demonstrate use of event queue
+            quitEvent = sdl2.SDL_Event()
+            quitEvent.type = sdl2.SDL_QUIT
+            sdl2.SDL_PushEvent(ctypes.byref(quitEvent))
 
         # ball collision -- wall
         if self.ball.x >= self.SCREEN_WIDTH:
