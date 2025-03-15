@@ -219,7 +219,7 @@ class Main:
             self.update(et)
             self.render()
 
-        # render
+        # shutdown
         sdl2.SDL_DestroyRenderer(self.renderer)
         sdl2.SDL_DestroyWindow(self.window)
         sdl2.SDL_Quit()
