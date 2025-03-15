@@ -127,6 +127,6 @@ involved. To use call id(class_name_here)
 
 --------------------------------------------------------------------------------
 
-If i want to use Iterable[my_type] instead of list for static type checking
+If I want to use Iterable[my_type] instead of list for static type checking
 purposes, but later need to call a list method like .remove(), I can just
 cast the iterable to a list and call .remove() on it.
