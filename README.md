@@ -11,4 +11,8 @@ To run:
 - Install the packages from the requirements.txt manifest
 - python main.py
 
+TODO:
+- Implement finite state machine
+- Menus and buttons
+
 ![A screenshot of the game](media/screenshot.png)
