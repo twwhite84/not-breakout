@@ -3,7 +3,9 @@ import sdl2
 
 
 class GameObject(IRenderable):
-    def __init__(self, x, y, w, h, color: tuple) -> None:
+    def __init__(
+        self, x: int, y: int, w: int, h: int, color: tuple[int, int, int, int]
+    ) -> None:
         self.x = x
         self.y = y
         self.w = w
@@ -11,20 +13,20 @@ class GameObject(IRenderable):
         self.color = color
 
     @property
-    def x(self):
-        return int(self._x)
+    def x(self) -> int:
+        return self._x
 
     @x.setter
-    def x(self, value):
-        self._x = int(value)
+    def x(self, value: int) -> None:
+        self._x = value
 
     @property
-    def y(self):
-        return int(self._y)
+    def y(self) -> int:
+        return self._y
 
     @y.setter
-    def y(self, value):
-        self._y = int(value)
+    def y(self, value: int) -> None:
+        self._y = value
 
     def render(self, renderer: sdl2.SDL_Renderer) -> None:
         renderable = sdl2.SDL_Rect(

@@ -4,6 +4,7 @@ import sdl2
 import Colors
 from StateMachine import StateMachine
 from PlayState import PlayState
+from typing import cast
 
 
 class Main:
@@ -35,7 +36,7 @@ class Main:
                 self.running = False
                 break
 
-    def update(self, et: float) -> None:
+    def update(self, et: int) -> None:
         self.fsm.update(et)
 
     def render(self) -> None:
@@ -45,20 +46,20 @@ class Main:
         sdl2.SDL_RenderPresent(self.renderer)
 
     def run(self) -> None:
-        MAX_FPS = 60
-        TARGET_SPF = 1 / MAX_FPS
-        dt = sdl2.SDL_GetTicks()
+        MAX_FPS: int = 60
+        TARGET_MSPF: int = int((1 / MAX_FPS) * 1000)
+        dt: int = 0
 
         self.running = True
         while self.running:
-            prev_dt = dt
-            dt = sdl2.SDL_GetTicks()
-            et = (dt - prev_dt) / 1000.0
-            if et < TARGET_SPF:
-                sdl2.SDL_Delay(int((TARGET_SPF - et) * 1000))
+            prev_dt: int = dt
+            dt = cast(int, sdl2.SDL_GetTicks())
+            et: int = dt - prev_dt
+            if et < TARGET_MSPF:
+                sdl2.SDL_Delay(TARGET_MSPF - et)
 
             self.processEvents()
-            self.update(float(et))
+            self.update(et)
             self.render()
 
         # shutdown

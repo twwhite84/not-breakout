@@ -2,7 +2,8 @@
 
 from IState import IState
 
-class StateMachine():
+
+class StateMachine:
     def __init__(self) -> None:
         self.state_list: list[IState] = []
 
@@ -25,10 +26,10 @@ class StateMachine():
             if self.state_list[-1].onExit():
                 self.state_list.pop()
 
-    def update(self, et: float) -> None:
+    def update(self, et: int) -> None:
         if len(self.state_list) > 0:
-           self.state_list[-1].update(et)
+            self.state_list[-1].update(et)
 
-    def render(self):
+    def render(self) -> None:
         if len(self.state_list) > 0:
-            self.state_list[-1].render() 
+            self.state_list[-1].render()

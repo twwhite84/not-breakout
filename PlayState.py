@@ -11,12 +11,17 @@ import math
 import sdl2
 import ctypes
 
+
 class PlayState(IState):
-    def __init__(self, window, renderer) -> None:
+    def __init__(self, window: sdl2.SDL_Window, renderer: sdl2.SDL_Renderer) -> None:
 
         self.screen_width_c: ctypes.c_int = ctypes.c_int(0)
         self.screen_height_c: ctypes.c_int = ctypes.c_int(0)
-        sdl2.SDL_GetWindowSize(window, ctypes.pointer(self.screen_width_c), ctypes.pointer(self.screen_height_c))
+        sdl2.SDL_GetWindowSize(
+            window,
+            ctypes.pointer(self.screen_width_c),
+            ctypes.pointer(self.screen_height_c),
+        )
         self.screen_width = self.screen_width_c.value
         self.screen_height = self.screen_height_c.value
         self.renderer = renderer
@@ -26,21 +31,21 @@ class PlayState(IState):
 
         # player
         self.player: Player = Player(
-            x = self.screen_width * 0.5,
-            y = self.screen_height - 50,
-            w = 100,
-            h = 20,
-            color = Colors.WHITE,
+            x=int(self.screen_width * 0.5),
+            y=self.screen_height - 50,
+            w=100,
+            h=20,
+            color=Colors.WHITE,
         )
 
         # ball
         ball_diameter = 20
         self.ball: Ball = Ball(
-            x = self.screen_width * 0.5,
-            y = self.screen_height * 0.5 - ball_diameter * 0.5,
-            w = ball_diameter,
-            h = ball_diameter,
-            color = Colors.CYAN,
+            x=int(self.screen_width * 0.5),
+            y=int(self.screen_height * 0.5 - ball_diameter * 0.5),
+            w=ball_diameter,
+            h=ball_diameter,
+            color=Colors.CYAN,
         )
 
         self.renderables: Iterable[Union[IRenderable | Iterable[IRenderable]]] = [
@@ -49,16 +54,16 @@ class PlayState(IState):
             self.ball,
         ]
 
-    def update(self, et: float) -> None:
+    def update(self, et: int) -> None:
         # handle keyboard input to move player, if within playfield
         currentKeyStates = sdl2.SDL_GetKeyboardState(None)
         if currentKeyStates[sdl2.SDL_SCANCODE_LEFT]:
             if not self.player.x - (0.5 * self.player.w) <= 0:
-                self.player.x -= self.player.speed * et
+                self.player.x -= int(self.player.speed * et)
 
         if currentKeyStates[sdl2.SDL_SCANCODE_RIGHT]:
             if not self.player.x + (0.5 * self.player.w) >= self.screen_width:
-                self.player.x += self.player.speed * et
+                self.player.x += int(self.player.speed * et)
 
         if currentKeyStates[sdl2.SDL_SCANCODE_ESCAPE]:
             quitEvent = sdl2.SDL_Event()
@@ -68,11 +73,11 @@ class PlayState(IState):
         # ball collision -- wall
         if self.ball.x >= self.screen_width:
             self.ball.direction.x *= -1
-            self.ball.x -= self.ball.w * 0.5
+            self.ball.x -= int(self.ball.w * 0.5)
 
         if self.ball.x <= 0:
             self.ball.direction.x *= -1
-            self.ball.x += self.ball.w * 0.5
+            self.ball.x += int(self.ball.w * 0.5)
 
         if self.ball.y >= self.screen_height:
             quitEvent = sdl2.SDL_Event()
@@ -81,7 +86,7 @@ class PlayState(IState):
 
         if self.ball.y <= 0:
             self.ball.direction.y *= -1
-            self.ball.y += self.ball.h * 0.5
+            self.ball.y += int(self.ball.h * 0.5)
 
         # ball collision -- player
         if self.isCollision(self.ball, self.player):
@@ -91,7 +96,7 @@ class PlayState(IState):
         for block in self.blocks:
             if self.isCollision(self.ball, block):
                 self.bounce(self.ball, self.findHitside(self.ball, block))
-                cast(list, self.blocks).remove(block)
+                cast(list[Block], self.blocks).remove(block)
                 break
 
         # ball movement
@@ -110,7 +115,7 @@ class PlayState(IState):
     def onEnter(self) -> bool:
         print("PLAY STATE -- ENTER")
         return True
-    
+
     def onExit(self) -> bool:
         print("PLAY STATE -- EXIT")
         return True
@@ -135,8 +140,8 @@ class PlayState(IState):
             for row in range(5):
                 blocks.append(
                     Block(
-                        x_offset + column * (block_width + margin),
-                        y_offset + row * (block_height + margin),
+                        int(x_offset + column * (block_width + margin)),
+                        int(y_offset + row * (block_height + margin)),
                         block_width,
                         block_height,
                         colors[row],
@@ -144,7 +149,7 @@ class PlayState(IState):
                 )
 
         return blocks
-    
+
     def isCollision(self, a: GameObject, b: GameObject) -> bool:
         if (
             (a.x < (b.x + 0.5 * b.w + 0.5 * a.w))
@@ -173,17 +178,17 @@ class PlayState(IState):
     def bounce(self, x: Ball, hitside: Hitside) -> None:
         # REMEMBER: down is positive in screen coords
         if hitside == Hitside.top:
-            x.y -= 0.5 * x.h
+            x.y -= int(0.5 * x.h)
             x.direction.y *= -1
 
         elif hitside == Hitside.bottom:
-            x.y += 0.5 * x.h
+            x.y += int(0.5 * x.h)
             x.direction.y *= -1
 
         elif hitside == Hitside.right:
-            x.x += 0.5 * x.w
+            x.x += int(0.5 * x.w)
             x.direction.x *= -1
 
         else:
-            x.x -= 0.5 * x.w
+            x.x -= int(0.5 * x.w)
             x.direction.x *= -1
