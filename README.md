@@ -14,8 +14,7 @@ To run:
 - Arrow keys to move paddle, Escape to quit
 
 TODO:
-- Fix circular import issue with state machine
-- Need to return to intro screen when game over
+- Need a different way to handle keyboard input so Escape key press includes a delay before refiring
 
 ![Intro screen](media/intro.png)
 ![Game screen](media/game.png)
