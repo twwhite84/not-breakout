@@ -5,12 +5,19 @@ from Block import Block
 from Player import Player
 from Ball import Ball
 from GameObject import GameObject
-from Hitside import Hitside
 import Colors
 import math
 import sdl2
 import ctypes
 from StateMachine import StateMachine, StateCode
+from enum import Enum
+
+
+class Hitside(Enum):
+    top = "top"
+    bottom = "bottom"
+    left = "left"
+    right = "right"
 
 
 class PlayState(IState):
@@ -31,33 +38,7 @@ class PlayState(IState):
         self.renderer = renderer
         self.fsm = fsm
 
-        # blocks
-        self.blocks: Iterable[Block] = self.makeBlocks()
-
-        # player
-        self.player: Player = Player(
-            x=int(self.screen_width * 0.5),
-            y=self.screen_height - 50,
-            w=100,
-            h=20,
-            color=Colors.WHITE,
-        )
-
-        # ball
-        ball_diameter = 20
-        self.ball: Ball = Ball(
-            x=int(self.screen_width * 0.5),
-            y=int(self.screen_height * 0.5 - ball_diameter * 0.5),
-            w=ball_diameter,
-            h=ball_diameter,
-            color=Colors.CYAN,
-        )
-
-        self.renderables: Iterable[Union[IRenderable | Iterable[IRenderable]]] = [
-            self.blocks,
-            self.player,
-            self.ball,
-        ]
+        self.reset()
 
     def reset(self) -> None:
         # blocks
@@ -100,10 +81,7 @@ class PlayState(IState):
                 self.player.x += int(self.player.speed * et)
 
         if currentKeyStates[sdl2.SDL_SCANCODE_ESCAPE]:
-            quitEvent = sdl2.SDL_Event()
-            quitEvent.type = sdl2.SDL_QUIT
-            sdl2.SDL_PushEvent(ctypes.byref(quitEvent))
-            # self.fsm.changeState(StateCode.PLAY, StateCode.INTRO)
+            self.fsm.changeState(StateCode.INTRO)
 
         # ball collision -- wall
         if self.ball.x >= self.screen_width:
@@ -115,7 +93,7 @@ class PlayState(IState):
             self.ball.x += int(self.ball.w * 0.5)
 
         if self.ball.y >= self.screen_height:
-            self.fsm.changeState(StateCode.PLAY, StateCode.INTRO)
+            self.fsm.changeState(StateCode.INTRO)
 
         if self.ball.y <= 0:
             self.ball.direction.y *= -1

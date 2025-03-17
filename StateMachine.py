@@ -3,7 +3,6 @@ from enum import Enum
 
 
 class StateCode(Enum):
-    INIT = 0
     INTRO = 1
     PLAY = 2
 
@@ -18,18 +17,28 @@ class StateMachine:
     def __init__(self) -> None:
         self.state_map: dict[StateCode, State] = {}
 
-    def changeState(self, from_code: StateCode, to_code: StateCode) -> None:
-        if from_code == StateCode.INIT:
-            self.state_map[to_code].active = True
-            return
+    def changeState(self, code: StateCode) -> None:
+        for key in self.state_map.keys():
+            if self.state_map[key].active == True:
+                self.state_map[key].active = False
+                self.state_map[key].state.onExit()
 
-        if from_code in self.state_map.keys():
-            self.state_map[from_code].active = False
-            self.state_map[from_code].state.onExit()
+        if code in self.state_map.keys():
+            self.state_map[code].active = True
+            self.state_map[code].state.onEnter()
 
-        if to_code in self.state_map.keys():
-            self.state_map[to_code].active = True
-            self.state_map[to_code].state.onEnter()
+        # if self.active_states == 0:
+        #     self.state_map[code].active = True
+        #     self.active_states += 1
+        #     return
+
+        # if from_code in self.state_map.keys():
+        #     self.state_map[from_code].active = False
+        #     self.state_map[from_code].state.onExit()
+
+        # if code in self.state_map.keys():
+        #     self.state_map[code].active = True
+        #     self.state_map[code].state.onEnter()
 
     def addState(self, code: StateCode, state: IState) -> None:
         if code not in self.state_map.keys():

@@ -8,7 +8,7 @@ import math
 from StateMachine import StateMachine, StateCode
 
 
-class MainMenuState(IState):
+class IntroState(IState):
     def __init__(
         self, window: sdl2.SDL_Window, renderer: sdl2.SDL_Renderer, fsm: StateMachine
     ) -> None:
@@ -47,7 +47,12 @@ class MainMenuState(IState):
     def update(self, et: int) -> None:
         currentKeyStates = sdl2.SDL_GetKeyboardState(None)
         if currentKeyStates[sdl2.SDL_SCANCODE_RETURN]:
-            self.fsm.changeState(StateCode.INTRO, StateCode.PLAY)
+            self.fsm.changeState(StateCode.PLAY)
+
+        if currentKeyStates[sdl2.SDL_SCANCODE_ESCAPE]:
+            quitEvent = sdl2.SDL_Event()
+            quitEvent.type = sdl2.SDL_QUIT
+            sdl2.SDL_PushEvent(ctypes.byref(quitEvent))
 
         self.rotang += 0.0015 * et
         self.yoffset_odd = int(math.sin(self.rotang * math.pi) * 20)
@@ -101,9 +106,9 @@ class MainMenuState(IState):
         sdl2.SDL_RenderCopy(self.renderer, self.text_texture_playgame, None, pasteArea)
 
     def onEnter(self) -> bool:
-        print("MAIN MENU STATE -- ENTRY")
+        print("INTRO STATE -- ENTRY")
         return True
 
     def onExit(self) -> bool:
-        print("MAIN MENU STATE -- EXIT")
+        print("INTRO STATE -- EXIT")
         return True
