@@ -18,4 +18,4 @@ TODO:
 - Need to return to intro screen when game over
 
 ![Intro screen](media/intro.png)
-![Play screen](media/screenshot.png)
+![Game screen](media/game.png)
