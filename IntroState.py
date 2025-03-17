@@ -1,7 +1,6 @@
 from IState import IState
 import sdl2
 from sdl2 import sdlttf
-from typing import cast
 import ctypes
 import Colors
 import math

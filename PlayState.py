@@ -1,6 +1,6 @@
 from IState import IState
 from IRenderable import IRenderable
-from typing import Iterable, List, Union, cast
+from typing import Iterable, List, cast
 from Block import Block
 from Player import Player
 from Ball import Ball
