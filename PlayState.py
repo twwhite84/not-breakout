@@ -115,9 +115,6 @@ class PlayState(IState):
             self.ball.x += int(self.ball.w * 0.5)
 
         if self.ball.y >= self.screen_height:
-            # quitEvent = sdl2.SDL_Event()
-            # quitEvent.type = sdl2.SDL_QUIT
-            # sdl2.SDL_PushEvent(ctypes.byref(quitEvent))
             self.fsm.changeState(StateCode.PLAY, StateCode.INTRO)
 
         if self.ball.y <= 0:
