@@ -5,8 +5,7 @@ from typing import cast
 import ctypes
 import Colors
 import math
-from StateMachine import StateMachine
-from PlayState import PlayState
+from StateMachine import StateMachine, StateCode
 
 
 class MainMenuState(IState):
@@ -48,7 +47,7 @@ class MainMenuState(IState):
     def update(self, et: int) -> None:
         currentKeyStates = sdl2.SDL_GetKeyboardState(None)
         if currentKeyStates[sdl2.SDL_SCANCODE_RETURN]:
-            self.fsm.changeState(PlayState(self.window, self.renderer, self.fsm))
+            self.fsm.changeState(StateCode.INTRO, StateCode.PLAY)
 
         self.rotang += 0.0015 * et
         self.yoffset_odd = int(math.sin(self.rotang * math.pi) * 20)

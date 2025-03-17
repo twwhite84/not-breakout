@@ -3,9 +3,8 @@ import ctypes
 import sdl2
 from sdl2 import sdlttf
 import Colors
-from StateMachine import StateMachine
-
-# from PlayState import PlayState
+from StateMachine import StateMachine, StateCode
+from PlayState import PlayState
 from MainMenuState import MainMenuState
 from typing import cast
 
@@ -31,7 +30,14 @@ class Main:
         )
 
         self.fsm = StateMachine()
-        self.fsm.changeState(MainMenuState(self.window, self.renderer, self.fsm))
+        self.fsm.addState(
+            StateCode.INTRO, MainMenuState(self.window, self.renderer, self.fsm)
+        )
+        self.fsm.addState(
+            StateCode.PLAY, PlayState(self.window, self.renderer, self.fsm)
+        )
+        self.fsm.changeState(StateCode.INIT, StateCode.INTRO)
+
         self.event = sdl2.SDL_Event()
         self.running = True
 
