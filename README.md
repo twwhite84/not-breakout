@@ -17,4 +17,5 @@ TODO:
 - Fix circular import issue with state machine
 - Need to return to intro screen when game over
 
-![A screenshot of the game](media/screenshot.png)
+![Intro screen](media/intro.png)
+![Play screen](media/screenshot.png)
