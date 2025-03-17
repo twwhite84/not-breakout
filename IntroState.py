@@ -44,17 +44,23 @@ class IntroState(IState):
         self.yoffset_odd: int = 0
         self.rotang: float = 0
 
+    def processEvents(self, event: sdl2.SDL_Event) -> bool:
+        while sdl2.SDL_PollEvent(ctypes.byref(event)):
+            if event.type == sdl2.SDL_KEYDOWN:
+                if event.key.keysym.sym == sdl2.SDLK_ESCAPE:
+                    quitEvent = sdl2.SDL_Event()
+                    quitEvent.type = sdl2.SDL_QUIT
+                    sdl2.SDL_PushEvent(ctypes.byref(quitEvent))
+
+                elif event.key.keysym.sym == sdl2.SDLK_RETURN:
+                    self.fsm.changeState(StateCode.PLAY)
+
+            if event.type == sdl2.SDL_QUIT:
+                return True
+
+        return False
+
     def update(self, et: int) -> None:
-        currentKeyStates = sdl2.SDL_GetKeyboardState(None)
-        if currentKeyStates[sdl2.SDL_SCANCODE_RETURN]:
-            self.fsm.changeState(StateCode.PLAY)
-
-        if currentKeyStates[sdl2.SDL_SCANCODE_ESCAPE]:
-            # quitEvent = sdl2.SDL_Event()
-            # quitEvent.type = sdl2.SDL_QUIT
-            # sdl2.SDL_PushEvent(ctypes.byref(quitEvent))
-            pass
-
         self.rotang += 0.0015 * et
         self.yoffset_odd = int(math.sin(self.rotang * math.pi) * 20)
         self.yoffset_even = int(math.sin(self.rotang * math.pi - (0.25 * math.pi)) * 20)

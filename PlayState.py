@@ -69,6 +69,13 @@ class PlayState(IState):
             self.ball,
         ]
 
+    def processEvents(self, event: sdl2.SDL_Event) -> bool:
+        while sdl2.SDL_PollEvent(ctypes.byref(event)):
+            if event.type == sdl2.SDL_KEYDOWN:
+                if event.key.keysym.sym == sdl2.SDLK_ESCAPE:
+                    self.fsm.changeState(StateCode.INTRO)
+        return False
+
     def update(self, et: int) -> None:
         # handle keyboard input to move player, if within playfield
         currentKeyStates = sdl2.SDL_GetKeyboardState(None)
@@ -79,9 +86,6 @@ class PlayState(IState):
         if currentKeyStates[sdl2.SDL_SCANCODE_RIGHT]:
             if not self.player.x + (0.5 * self.player.w) >= self.screen_width:
                 self.player.x += int(self.player.speed * et)
-
-        if currentKeyStates[sdl2.SDL_SCANCODE_ESCAPE]:
-            self.fsm.changeState(StateCode.INTRO)
 
         # ball collision -- wall
         if self.ball.x >= self.screen_width:

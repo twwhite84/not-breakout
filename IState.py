@@ -8,6 +8,10 @@ class IState(metaclass=ABCMeta):
         pass
 
     @abstractmethod
+    def processEvents(self, event: sdl2.SDL_Event) -> bool:
+        pass
+
+    @abstractmethod
     def update(self, et: int) -> None:
         pass
 

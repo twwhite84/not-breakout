@@ -1,5 +1,6 @@
 from IState import IState
 from enum import Enum
+import sdl2
 
 
 class StateCode(Enum):
@@ -34,6 +35,14 @@ class StateMachine:
     def dropState(self, code: StateCode) -> None:
         if code in self.state_map.keys():
             del self.state_map[code]
+
+    def processEvents(self, event: sdl2.SDL_Event) -> bool:
+        for code in self.state_map.keys():
+            if self.state_map[code].active == True:
+                if self.state_map[code].state.processEvents(event):
+                    return True
+
+        return False
 
     def update(self, et: int) -> None:
         for code in self.state_map.keys():

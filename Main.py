@@ -1,5 +1,4 @@
 import sys
-import ctypes
 import sdl2
 from sdl2 import sdlttf
 import Colors
@@ -41,11 +40,9 @@ class Main:
         self.event = sdl2.SDL_Event()
         self.running = True
 
-    def processEvents(self) -> None:
-        while sdl2.SDL_PollEvent(ctypes.byref(self.event)):
-            if self.event.type == sdl2.SDL_QUIT:
-                self.running = False
-                break
+    def processEvents(self, event: sdl2.SDL_Event) -> None:
+        if self.fsm.processEvents(event):
+            self.running = False
 
     def update(self, et: int) -> None:
         self.fsm.update(et)
@@ -69,7 +66,7 @@ class Main:
             if et < TARGET_MSPF:
                 sdl2.SDL_Delay(TARGET_MSPF - et)
 
-            self.processEvents()
+            self.processEvents(self.event)
             self.update(et)
             self.render()
 
