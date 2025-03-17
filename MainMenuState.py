@@ -20,63 +20,35 @@ class MainMenuState(IState):
         self.screen_height: int = self.screen_height_c.value
         self.renderer = renderer
 
-        font_bitwise = sdlttf.TTF_OpenFont(b"fonts\joystix_mono.otf", 24)
+        font_joystix = sdlttf.TTF_OpenFont(b"fonts\joystix_mono.otf", 24)
 
-        # title text -- odd letters bg
-        text_surface: sdl2.SDL_Surface = sdlttf.TTF_RenderText_Solid(
-            font_bitwise, b"N t B e k u ", sdl2.SDL_Color(*Colors.RED)
-        )
-        self.text_texture_title_odd_bg = sdl2.SDL_CreateTextureFromSurface(
-            renderer, text_surface
-        )
+        def makeText(text: bytes, color: tuple[int, int, int, int]) -> sdl2.SDL_Texture:
+            text_surface: sdl2.SDL_Surface = sdlttf.TTF_RenderText_Solid(
+                font_joystix, text, sdl2.SDL_Color(*color)
+            )
+            return sdl2.SDL_CreateTextureFromSurface(renderer, text_surface)
 
-        # title text -- odd letters fg
-        text_surface = sdlttf.TTF_RenderText_Solid(
-            font_bitwise, b"N t B e k u ", sdl2.SDL_Color(*Colors.YELLOW)
-        )
-        self.text_texture_title_odd_fg = sdl2.SDL_CreateTextureFromSurface(
-            renderer, text_surface
-        )
+        self.text_texture_title_odd_bg = makeText(b"N t B e k u ", Colors.RED)
+        self.text_texture_title_odd_fg = makeText(b"N t B e k u ", Colors.YELLOW)
+        self.text_texture_title_even_bg = makeText(b" o   r a o t", Colors.RED)
+        self.text_texture_title_even_fg = makeText(b" o   r a o t", Colors.YELLOW)
+        self.text_texture_playgame = makeText(b"PRESS ENTER TO START", Colors.WHITE)
 
-        # title text -- even letters bg
-        text_surface = sdlttf.TTF_RenderText_Solid(
-            font_bitwise, b" o   r a o t", sdl2.SDL_Color(*Colors.RED)
-        )
-        self.text_texture_title_even_bg = sdl2.SDL_CreateTextureFromSurface(
-            renderer, text_surface
-        )
-
-        # title text -- even letters fg
-        text_surface = sdlttf.TTF_RenderText_Solid(
-            font_bitwise, b" o   r a o t", sdl2.SDL_Color(*Colors.YELLOW)
-        )
-        self.text_texture_title_even_fg = sdl2.SDL_CreateTextureFromSurface(
-            renderer, text_surface
-        )
-
-        # play text
-        text_surface = sdlttf.TTF_RenderText_Solid(
-            font_bitwise, b"PRESS ENTER TO START", sdl2.SDL_Color(*Colors.WHITE)
-        )
-        self.text_texture_playgame = sdl2.SDL_CreateTextureFromSurface(
-            renderer, text_surface
-        )
-
-        sdlttf.TTF_CloseFont(font_bitwise)
+        sdlttf.TTF_CloseFont(font_joystix)
 
         self.yoffset_odd: int = 0
-        self.mystep: float = 0
+        self.rotang: float = 0
 
     def update(self, et: int) -> None:
-        self.mystep += 0.0015 * et
-        self.yoffset_odd = int(math.sin(self.mystep * math.pi) * 20)
-        self.yoffset_even = int(math.sin(self.mystep * math.pi - (0.25 * math.pi)) * 20)
+        self.rotang += 0.0015 * et
+        self.yoffset_odd = int(math.sin(self.rotang * math.pi) * 20)
+        self.yoffset_even = int(math.sin(self.rotang * math.pi - (0.25 * math.pi)) * 20)
 
         sdl2.SDL_SetTextureColorMod(
             self.text_texture_playgame,
-            abs(int(math.sin(self.mystep * math.pi) * 255)),
-            abs(int(math.sin(self.mystep * math.pi - (0.25 * math.pi)) * 255)),
-            abs(int(math.sin(self.mystep * math.pi - (0.75 * math.pi)) * 255)),
+            abs(int(math.sin(self.rotang * math.pi) * 255)),
+            abs(int(math.sin(self.rotang * math.pi - (0.25 * math.pi)) * 255)),
+            abs(int(math.sin(self.rotang * math.pi - (0.75 * math.pi)) * 255)),
         )
 
     def render(self) -> None:
