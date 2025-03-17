@@ -1,8 +1,6 @@
 from abc import ABCMeta, abstractmethod
 import sdl2
 
-# from StateMachine import StateMachine
-
 
 class IState(metaclass=ABCMeta):
     @abstractmethod
