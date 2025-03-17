@@ -5,6 +5,7 @@ This is a game similar to the old arcade title Breakout. I wrote it as an exerci
 - Classes and interfaces (abstract base class with do-nothing methods... similar to pure virtual methods in C++)
 - Use of ctypes and byref to work with a C-based library, in this case SDL
 - Operator overloading for a 2D Vector class
+- Use of a state pattern to implement switching between intro and game
 
 To run:
 - Create a .venv virtual environment
@@ -13,7 +14,7 @@ To run:
 - Arrow keys to move paddle, Escape to quit
 
 TODO:
-- Implement finite state machine
-- Menus and buttons
+- Fix circular import issue with state machine
+- Need to return to intro screen when game over
 
 ![A screenshot of the game](media/screenshot.png)
