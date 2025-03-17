@@ -1,9 +1,12 @@
 import sys
 import ctypes
 import sdl2
+from sdl2 import sdlttf
 import Colors
 from StateMachine import StateMachine
-from PlayState import PlayState
+
+# from PlayState import PlayState
+from MainMenuState import MainMenuState
 from typing import cast
 
 
@@ -13,6 +16,8 @@ class Main:
         self.SCREEN_HEIGHT: int = 600
 
         sdl2.SDL_Init(sdl2.SDL_INIT_VIDEO)
+        sdlttf.TTF_Init()
+
         self.window = sdl2.SDL_CreateWindow(
             b"Not Breakout",
             sdl2.SDL_WINDOWPOS_CENTERED,
@@ -26,7 +31,7 @@ class Main:
         )
 
         self.fsm = StateMachine()
-        self.fsm.pushState(PlayState(self.window, self.renderer))
+        self.fsm.changeState(MainMenuState(self.window, self.renderer))
         self.event = sdl2.SDL_Event()
         self.running = True
 
@@ -63,6 +68,7 @@ class Main:
             self.render()
 
         # shutdown
+        sdlttf.TTF_Quit()
         sdl2.SDL_DestroyRenderer(self.renderer)
         sdl2.SDL_DestroyWindow(self.window)
         sdl2.SDL_Quit()
