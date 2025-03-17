@@ -55,62 +55,39 @@ class MainMenuState(IState):
 
         srcWidth_c: ctypes.c_int = ctypes.c_int(0)
         srcHeight_c: ctypes.c_int = ctypes.c_int(0)
-        _ = sdl2.SDL_QueryTexture(
+
+        # title text
+        sdl2.SDL_QueryTexture(
             self.text_texture_title_odd_bg, None, None, srcWidth_c, srcHeight_c
         )
-        srcWidth: int = srcWidth_c.value
-        srcHeight: int = srcHeight_c.value
+        title_w: int = srcWidth_c.value
+        title_h: int = srcHeight_c.value
 
-        # title odd bg
-        pasteArea: sdl2.SDL_Rect = sdl2.SDL_Rect(
-            int(0.5 * self.screen_width - 0.5 * srcWidth * 3),
-            int(0.33 * self.screen_height - 0.5 * srcHeight * 3 + self.yoffset_odd),
-            int(srcWidth * 3),
-            int(srcHeight * 3),
-        )
-        sdl2.SDL_RenderCopy(
-            self.renderer, self.text_texture_title_odd_bg, None, pasteArea
-        )
+        def renderTitle(text: sdl2.SDL_Texture, y_offset: int, shadow: int = 0) -> None:
+            pasteArea: sdl2.SDL_Rect = sdl2.SDL_Rect(
+                int(0.5 * self.screen_width - 0.5 * title_w * 3) + shadow,
+                int(0.33 * self.screen_height - 0.5 * title_h * 3 + y_offset) + shadow,
+                int(title_w * 3),
+                int(title_h * 3),
+            )
+            sdl2.SDL_RenderCopy(self.renderer, text, None, pasteArea)
 
-        # title even bg
+        renderTitle(self.text_texture_title_odd_bg, self.yoffset_odd)
+        renderTitle(self.text_texture_title_even_bg, self.yoffset_even)
+        renderTitle(self.text_texture_title_odd_fg, self.yoffset_odd, shadow=5)
+        renderTitle(self.text_texture_title_even_fg, self.yoffset_even, shadow=5)
+
+        # press play text
+        sdl2.SDL_QueryTexture(
+            self.text_texture_playgame, None, None, srcWidth_c, srcHeight_c
+        )
+        text_play_w: int = srcWidth_c.value
+        text_play_h: int = srcHeight_c.value
         pasteArea = sdl2.SDL_Rect(
-            int(0.5 * self.screen_width - 0.5 * srcWidth * 3),
-            int(0.33 * self.screen_height - 0.5 * srcHeight * 3 + self.yoffset_even),
-            int(srcWidth * 3),
-            int(srcHeight * 3),
-        )
-        sdl2.SDL_RenderCopy(
-            self.renderer, self.text_texture_title_even_bg, None, pasteArea
-        )
-
-        # title odd fg
-        pasteArea = sdl2.SDL_Rect(
-            int(0.5 * self.screen_width - 0.5 * srcWidth * 3) + 5,
-            int(0.33 * self.screen_height - 0.5 * srcHeight * 3 + self.yoffset_odd) + 5,
-            int(srcWidth * 3),
-            int(srcHeight * 3),
-        )
-        sdl2.SDL_RenderCopy(
-            self.renderer, self.text_texture_title_odd_fg, None, pasteArea
-        )
-
-        # title even fg
-        pasteArea = sdl2.SDL_Rect(
-            int(0.5 * self.screen_width - 0.5 * srcWidth * 3) + 5,
-            int(0.33 * self.screen_height - 0.5 * srcHeight * 3 + self.yoffset_even)
-            + 5,
-            int(srcWidth * 3),
-            int(srcHeight * 3),
-        )
-        sdl2.SDL_RenderCopy(
-            self.renderer, self.text_texture_title_even_fg, None, pasteArea
-        )
-
-        pasteArea = sdl2.SDL_Rect(
-            int(0.5 * self.screen_width - 0.5 * srcWidth * 2),
-            int(0.75 * self.screen_height - 0.5 * srcHeight * 2),
-            int(srcWidth * 2),
-            int(srcHeight * 2),
+            int(0.5 * self.screen_width - 0.5 * text_play_w * 1.25),
+            int(0.75 * self.screen_height - 0.5 * text_play_h * 1.25),
+            int(text_play_w * 1.25),
+            int(text_play_h * 1.25),
         )
         sdl2.SDL_RenderCopy(self.renderer, self.text_texture_playgame, None, pasteArea)
 
