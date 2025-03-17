@@ -10,7 +10,7 @@ import Colors
 import math
 import sdl2
 import ctypes
-from StateMachine import StateMachine
+from StateMachine import StateMachine, StateCode
 
 
 class PlayState(IState):
@@ -59,6 +59,35 @@ class PlayState(IState):
             self.ball,
         ]
 
+    def reset(self) -> None:
+        # blocks
+        self.blocks = self.makeBlocks()
+
+        # player
+        self.player = Player(
+            x=int(self.screen_width * 0.5),
+            y=self.screen_height - 50,
+            w=100,
+            h=20,
+            color=Colors.WHITE,
+        )
+
+        # ball
+        ball_diameter = 20
+        self.ball = Ball(
+            x=int(self.screen_width * 0.5),
+            y=int(self.screen_height * 0.5 - ball_diameter * 0.5),
+            w=ball_diameter,
+            h=ball_diameter,
+            color=Colors.CYAN,
+        )
+
+        self.renderables = [
+            self.blocks,
+            self.player,
+            self.ball,
+        ]
+
     def update(self, et: int) -> None:
         # handle keyboard input to move player, if within playfield
         currentKeyStates = sdl2.SDL_GetKeyboardState(None)
@@ -74,6 +103,7 @@ class PlayState(IState):
             quitEvent = sdl2.SDL_Event()
             quitEvent.type = sdl2.SDL_QUIT
             sdl2.SDL_PushEvent(ctypes.byref(quitEvent))
+            # self.fsm.changeState(StateCode.PLAY, StateCode.INTRO)
 
         # ball collision -- wall
         if self.ball.x >= self.screen_width:
@@ -85,10 +115,10 @@ class PlayState(IState):
             self.ball.x += int(self.ball.w * 0.5)
 
         if self.ball.y >= self.screen_height:
-            quitEvent = sdl2.SDL_Event()
-            quitEvent.type = sdl2.SDL_QUIT
-            sdl2.SDL_PushEvent(ctypes.byref(quitEvent))
-            # self.fsm.changeState(MainMenuState(self.window, self.renderer, self.fsm))
+            # quitEvent = sdl2.SDL_Event()
+            # quitEvent.type = sdl2.SDL_QUIT
+            # sdl2.SDL_PushEvent(ctypes.byref(quitEvent))
+            self.fsm.changeState(StateCode.PLAY, StateCode.INTRO)
 
         if self.ball.y <= 0:
             self.ball.direction.y *= -1
@@ -119,6 +149,7 @@ class PlayState(IState):
                 item.render(self.renderer)
 
     def onEnter(self) -> bool:
+        self.reset()
         print("PLAY STATE -- ENTER")
         return True
 
