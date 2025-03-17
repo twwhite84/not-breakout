@@ -31,7 +31,7 @@ class Main:
         )
 
         self.fsm = StateMachine()
-        self.fsm.changeState(MainMenuState(self.window, self.renderer))
+        self.fsm.changeState(MainMenuState(self.window, self.renderer, self.fsm))
         self.event = sdl2.SDL_Event()
         self.running = True
 

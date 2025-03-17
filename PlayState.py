@@ -10,11 +10,15 @@ import Colors
 import math
 import sdl2
 import ctypes
+from StateMachine import StateMachine
 
 
 class PlayState(IState):
-    def __init__(self, window: sdl2.SDL_Window, renderer: sdl2.SDL_Renderer) -> None:
+    def __init__(
+        self, window: sdl2.SDL_Window, renderer: sdl2.SDL_Renderer, fsm: StateMachine
+    ) -> None:
 
+        self.window = window
         self.screen_width_c: ctypes.c_int = ctypes.c_int(0)
         self.screen_height_c: ctypes.c_int = ctypes.c_int(0)
         sdl2.SDL_GetWindowSize(
@@ -25,6 +29,7 @@ class PlayState(IState):
         self.screen_width = self.screen_width_c.value
         self.screen_height = self.screen_height_c.value
         self.renderer = renderer
+        self.fsm = fsm
 
         # blocks
         self.blocks: Iterable[Block] = self.makeBlocks()
@@ -83,6 +88,7 @@ class PlayState(IState):
             quitEvent = sdl2.SDL_Event()
             quitEvent.type = sdl2.SDL_QUIT
             sdl2.SDL_PushEvent(ctypes.byref(quitEvent))
+            # self.fsm.changeState(MainMenuState(self.window, self.renderer, self.fsm))
 
         if self.ball.y <= 0:
             self.ball.direction.y *= -1

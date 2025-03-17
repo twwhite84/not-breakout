@@ -5,10 +5,15 @@ from typing import cast
 import ctypes
 import Colors
 import math
+from StateMachine import StateMachine
+from PlayState import PlayState
 
 
 class MainMenuState(IState):
-    def __init__(self, window: sdl2.SDL_Window, renderer: sdl2.SDL_Renderer) -> None:
+    def __init__(
+        self, window: sdl2.SDL_Window, renderer: sdl2.SDL_Renderer, fsm: StateMachine
+    ) -> None:
+        self.window = window
         self.screen_width_c: ctypes.c_int = ctypes.c_int(0)
         self.screen_height_c: ctypes.c_int = ctypes.c_int(0)
         sdl2.SDL_GetWindowSize(
@@ -19,6 +24,7 @@ class MainMenuState(IState):
         self.screen_width: int = self.screen_width_c.value
         self.screen_height: int = self.screen_height_c.value
         self.renderer = renderer
+        self.fsm = fsm
 
         font_joystix = sdlttf.TTF_OpenFont(b"fonts\joystix_mono.otf", 24)
 
@@ -40,6 +46,10 @@ class MainMenuState(IState):
         self.rotang: float = 0
 
     def update(self, et: int) -> None:
+        currentKeyStates = sdl2.SDL_GetKeyboardState(None)
+        if currentKeyStates[sdl2.SDL_SCANCODE_RETURN]:
+            self.fsm.changeState(PlayState(self.window, self.renderer, self.fsm))
+
         self.rotang += 0.0015 * et
         self.yoffset_odd = int(math.sin(self.rotang * math.pi) * 20)
         self.yoffset_even = int(math.sin(self.rotang * math.pi - (0.25 * math.pi)) * 20)
