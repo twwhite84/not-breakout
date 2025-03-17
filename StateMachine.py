@@ -27,19 +27,6 @@ class StateMachine:
             self.state_map[code].active = True
             self.state_map[code].state.onEnter()
 
-        # if self.active_states == 0:
-        #     self.state_map[code].active = True
-        #     self.active_states += 1
-        #     return
-
-        # if from_code in self.state_map.keys():
-        #     self.state_map[from_code].active = False
-        #     self.state_map[from_code].state.onExit()
-
-        # if code in self.state_map.keys():
-        #     self.state_map[code].active = True
-        #     self.state_map[code].state.onEnter()
-
     def addState(self, code: StateCode, state: IState) -> None:
         if code not in self.state_map.keys():
             self.state_map[code] = State(state)

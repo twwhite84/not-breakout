@@ -50,9 +50,10 @@ class IntroState(IState):
             self.fsm.changeState(StateCode.PLAY)
 
         if currentKeyStates[sdl2.SDL_SCANCODE_ESCAPE]:
-            quitEvent = sdl2.SDL_Event()
-            quitEvent.type = sdl2.SDL_QUIT
-            sdl2.SDL_PushEvent(ctypes.byref(quitEvent))
+            # quitEvent = sdl2.SDL_Event()
+            # quitEvent.type = sdl2.SDL_QUIT
+            # sdl2.SDL_PushEvent(ctypes.byref(quitEvent))
+            pass
 
         self.rotang += 0.0015 * et
         self.yoffset_odd = int(math.sin(self.rotang * math.pi) * 20)
