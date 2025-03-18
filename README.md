@@ -13,5 +13,10 @@ To run:
 - python main.py
 - Arrow keys to move paddle, Escape to quit
 
+To do:
+- Sound fx and proper physics
+- Data-driven design (i.e. levels in files, not hardcoded)
+- More gameplay variation
+
 ![Intro screen](media/intro.png)
 ![Game screen](media/game.png)
