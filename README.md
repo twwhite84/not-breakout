@@ -13,10 +13,12 @@ To run:
 - python main.py
 - Arrow keys to move paddle, Escape to quit
 
-To do:
+Future:
 - Sound fx and proper physics
 - Data-driven design (i.e. levels in files, not hardcoded)
 - More gameplay variation
+- Game over state instead of just dropping back to intro
+- Loading and saving
 
 ![Intro screen](media/intro.png)
 ![Game screen](media/game.png)
