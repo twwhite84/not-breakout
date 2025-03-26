@@ -267,19 +267,6 @@ class PlayState(IState):
                 x = -1 * 1 / math.tan(theta * math.pi / 180)
                 y = -1.0
 
-        # trapped ball bug fix and gameplay tuning
-        if abs(x) < 0.2:
-            if x > 0:
-                x = 0.2
-            else:
-                x = -0.2
-
-        if abs(y) < 0.2:
-            if y > 0:
-                y = 0.2
-            else:
-                y = -0.2
-
         return Vector(x, -y)
 
     def bounce_bat(self, ball: Ball, obstacle: GameObject) -> None:
@@ -287,10 +274,24 @@ class PlayState(IState):
         dx: int = ball.x - obstacle.x
         theta: float = math.atan2(dy, dx)
         bounce_vector: Vector = self.vectorise_deg(theta)
+
+        # trapped ball bug fix and gameplay tuning
+        if abs(bounce_vector.x) < 0.2:
+            if bounce_vector.x > 0:
+                bounce_vector.x = 0.2
+            else:
+                bounce_vector.x = -0.2
+
+        if abs(bounce_vector.y) < 0.2:
+            if bounce_vector.y > 0:
+                bounce_vector.y = 0.2
+            else:
+                bounce_vector.y = -0.2
+
         ball.direction = bounce_vector
 
         # change speed. further away from bat center is faster, vice versa
-        ball.speed = 0.3 + ((abs(bounce_vector.x) + abs(bounce_vector.y)) / 2) * 0.3
+        ball.speed = 0.3 + ((abs(bounce_vector.x) + abs(bounce_vector.y)) / 2) * 0.2
 
     def bounce_block(self, x: Ball, hitside: Hitside) -> None:
         # REMEMBER: down is positive in screen coords
