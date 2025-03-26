@@ -48,7 +48,7 @@ class PlayState(IState):
         # player
         self.player = Player(
             x=int(self.screen_width * 0.5),
-            y=self.screen_height - 250,
+            y=self.screen_height - 50,
             w=100,
             h=20,
             color=Colors.WHITE,
@@ -58,7 +58,7 @@ class PlayState(IState):
         ball_diameter = 20
         self.ball = Ball(
             x=int(self.screen_width * 0.5),
-            y=int(self.screen_height * 0.5 - ball_diameter * 0.5) + 200,
+            y=int(self.screen_height * 0.5 - ball_diameter * 0.5),
             w=ball_diameter,
             h=ball_diameter,
             color=Colors.CYAN,
@@ -230,29 +230,19 @@ class PlayState(IState):
             elif (theta >= 0 and theta < 45) or (theta >= 315 and theta < 360):
                 x = 1.0
                 y = round(math.tan(theta * math.pi / 180), 2)
-                if y > 1.0:
-                    y = 1.0
+                print(f"top right arc {theta}")
 
             # top side
             elif theta >= 45 and theta < 135:
                 x = round(1 / math.tan(theta * math.pi / 180), 2)
-                if x > 1.0:
-                    x = 1.0
                 y = 1.0
+                print(f"top center arc {theta}")
 
             # left side
             elif theta >= 135 and theta < 225:
                 x = -1.0
                 y = round(math.tan(-1 * theta * math.pi / 180), 2)
-                if y > 1.0:
-                    y = 1.0
-
-            # bottom side
-            elif theta >= 225 and theta < 315:
-                x = round(1 / math.tan(theta * math.pi / 180), 2)
-                if x > 1.0:
-                    x = 1.0
-                y = -1.0
+                print(f"top left arc {theta}")
 
             return Vector(x, y)
 
