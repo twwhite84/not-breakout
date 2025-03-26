@@ -280,33 +280,23 @@ class PlayState(IState):
                 x = 0.0
                 y = -1.0
 
-            # right side
+            # bottom-right arc
             elif (theta >= 0 and theta < 45) or (theta >= 315 and theta < 360):
                 x = 1.0
                 y = round(math.tan(theta * math.pi / 180), 2)
-                if y > 1.0:
-                    y = 1.0
+                print(f"bottom right arc {theta}")
 
-            # top side
-            elif theta >= 45 and theta < 135:
-                x = round(1 / math.tan(theta * math.pi / 180), 2)
-                if x > 1.0:
-                    x = 1.0
-                y = 1.0
-
-            # left side
+            # bottom-left arc
             elif theta >= 135 and theta < 225:
                 x = -1.0
                 y = round(math.tan(-1 * theta * math.pi / 180), 2)
-                if y > 1.0:
-                    y = 1.0
+                print(f"bottom left arc {theta}")
 
-            # bottom side
+            # bottom-center arc
             elif theta >= 225 and theta < 315:
                 x = -1 * round(1 / math.tan(theta * math.pi / 180), 2)
-                if x > 1.0:
-                    x = 1.0
                 y = -1.0
+                print(f"bottom center arc {theta}")
 
             return Vector(x, y)
 
