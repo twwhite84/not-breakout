@@ -14,7 +14,7 @@ To run:
 - Arrow keys to move paddle, Escape to quit
 
 Future:
-- Sound fx and proper physics
+- Sound fx
 - Data-driven design (i.e. levels in files, not hardcoded)
 - More gameplay variation
 - Game over state instead of just dropping back to intro
