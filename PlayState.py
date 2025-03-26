@@ -198,12 +198,121 @@ class PlayState(IState):
             return Hitside.right
         return Hitside.left
 
-    def vectorise(self, theta: float) -> Vector:
+    def vectorise_deg(self, theta: float) -> Vector:
         x: float = 0
         y: float = 0
 
+        # --- IF BALL HITS FROM ABOVE ---
         if theta < 0:
-            theta = 2 * math.pi + theta
+            theta *= -1
+
+            # ang from bat to ball
+            theta = theta * 180 / math.pi
+
+            # special angles
+            if theta == 0:
+                x = 1.0
+                y = 0.0
+
+            elif theta == 90:
+                x = 0.0
+                y = 1.0
+
+            elif theta == 180:
+                x = -1.0
+                y = 0.0
+
+            elif theta == 270:
+                x = 0.0
+                y = -1.0
+
+            # right side
+            elif (theta >= 0 and theta < 45) or (theta >= 315 and theta < 360):
+                x = 1.0
+                y = round(math.tan(theta * math.pi / 180), 2)
+                if y > 1.0:
+                    y = 1.0
+
+            # top side
+            elif theta >= 45 and theta < 135:
+                x = round(1 / math.tan(theta * math.pi / 180), 2)
+                if x > 1.0:
+                    x = 1.0
+                y = 1.0
+
+            # left side
+            elif theta >= 135 and theta < 225:
+                x = -1.0
+                y = round(math.tan(-1 * theta * math.pi / 180), 2)
+                if y > 1.0:
+                    y = 1.0
+
+            # bottom side
+            elif theta >= 225 and theta < 315:
+                x = round(1 / math.tan(theta * math.pi / 180), 2)
+                if x > 1.0:
+                    x = 1.0
+                y = -1.0
+
+            return Vector(x, y)
+
+        # --- IF BALL HITS FROM BELOW ---
+        else:
+            theta = 2 * math.pi - theta
+
+            # ang from bat to ball
+            theta = theta * 180 / math.pi
+
+            # special angles
+            if theta == 0:
+                x = 1.0
+                y = 0.0
+
+            elif theta == 90:
+                x = 0.0
+                y = 1.0
+
+            elif theta == 180:
+                x = -1.0
+                y = 0.0
+
+            elif theta == 270:
+                x = 0.0
+                y = -1.0
+
+            # right side
+            elif (theta >= 0 and theta < 45) or (theta >= 315 and theta < 360):
+                x = 1.0
+                y = round(math.tan(theta * math.pi / 180), 2)
+                if y > 1.0:
+                    y = 1.0
+
+            # top side
+            elif theta >= 45 and theta < 135:
+                x = round(1 / math.tan(theta * math.pi / 180), 2)
+                if x > 1.0:
+                    x = 1.0
+                y = 1.0
+
+            # left side
+            elif theta >= 135 and theta < 225:
+                x = -1.0
+                y = round(math.tan(-1 * theta * math.pi / 180), 2)
+                if y > 1.0:
+                    y = 1.0
+
+            # bottom side
+            elif theta >= 225 and theta < 315:
+                x = -1 * round(1 / math.tan(theta * math.pi / 180), 2)
+                if x > 1.0:
+                    x = 1.0
+                y = -1.0
+
+            return Vector(x, y)
+
+    def vectorise(self, theta: float) -> Vector:
+        x: float = 0
+        y: float = 0
 
         # right side
         if (theta >= 0 and theta < math.pi / 4) or (
@@ -232,40 +341,13 @@ class PlayState(IState):
     def bounce2(self, ball: Ball, obstacle: GameObject) -> None:
 
         # angle between ball and block origins
-        dy = ball.y - obstacle.y
-        dx = ball.x - obstacle.x
-        theta_raw = math.atan2(dy, dx) * 180 / math.pi
-        bounce_theta = 0.0
-        if theta_raw < 0:
-            bounce_theta = theta_raw * -1
-        else:
-            bounce_theta = 360 - theta_raw
+        dy: int = ball.y - obstacle.y
+        dx: int = ball.x - obstacle.x
+        theta: float = math.atan2(dy, dx)
 
-        # print(f"theta_raw: {theta_raw}")
-        print(f"bounce_theta: {bounce_theta}")
-
+        # print(theta * 180 / math.pi)
+        print(self.vectorise_deg(theta))
         print("")
-        # if theta_raw < 0:
-        #     theta_adj = theta_raw + 360
-        #     print(f"theta_adj: {theta_adj}")
-
-        # print(self.vectorise(theta_raw))
-        # print("")
-        # theta_fixed = theta
-        # if theta < 0:
-        #     theta_fixed = 2 * math.pi + theta
-        # print(
-        #     f"rawrad: {theta} rawdeg: {theta*180/math.pi} rad: {theta_fixed}, deg: {theta_fixed * 180 / math.pi}"
-        # )
-
-        # v: Vector = self.vectorise(theta)
-        # if theta < 0:
-        # theta += 2 * math.pi
-
-        # print(v)
-        # print("\n")
-
-        # if ang was straight down, ie pi/2, then bounce straight up
 
     def bounce(self, x: Ball, hitside: Hitside) -> None:
         # REMEMBER: down is positive in screen coords
