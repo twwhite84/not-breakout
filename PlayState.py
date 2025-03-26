@@ -99,18 +99,13 @@ class PlayState(IState):
             self.ball.x += int(self.ball.w * 0.5)
 
         if self.ball.y >= self.screen_height:
-            # self.fsm.changeState(StateCode.INTRO)
-            self.ball.direction.y *= -1
-            self.ball.y -= int(self.ball.h * 0.5)
+            self.fsm.changeState(StateCode.INTRO)
 
         if self.ball.y <= 0:
             self.ball.direction.y *= -1
             self.ball.y += int(self.ball.h * 0.5)
 
         # ball collision -- player
-        # if self.isCollision(self.ball, self.player):
-        # self.bounce(self.ball, self.findHitside(self.ball, self.player))
-
         if self.isCollision(self.ball, self.player):
             self.bounce_bat(self.ball, self.player)
 
