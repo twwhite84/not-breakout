@@ -112,12 +112,12 @@ class PlayState(IState):
         # self.bounce(self.ball, self.findHitside(self.ball, self.player))
 
         if self.isCollision(self.ball, self.player):
-            self.bounce2(self.ball, self.player)
+            self.bounce_bat(self.ball, self.player)
 
         # ball collision -- block
         for block in self.blocks:
             if self.isCollision(self.ball, block):
-                self.bounce(self.ball, self.findHitside(self.ball, block))
+                self.bounce_block(self.ball, self.findHitside(self.ball, block))
                 cast(list[Block], self.blocks).remove(block)
                 break
 
@@ -222,29 +222,20 @@ class PlayState(IState):
                 x = -1.0
                 y = 0.0
 
-            elif theta == 270:
-                x = 0.0
-                y = -1.0
-
-            # right side
+            # top-right arc
             elif (theta >= 0 and theta < 45) or (theta >= 315 and theta < 360):
                 x = 1.0
-                y = round(math.tan(theta * math.pi / 180), 2)
-                print(f"top right arc {theta}")
+                y = math.tan(theta * math.pi / 180)
 
-            # top side
+            # top-center arc
             elif theta >= 45 and theta < 135:
-                x = round(1 / math.tan(theta * math.pi / 180), 2)
+                x = 1 / math.tan(theta * math.pi / 180)
                 y = 1.0
-                print(f"top center arc {theta}")
 
-            # left side
+            # top-left arc
             elif theta >= 135 and theta < 225:
                 x = -1.0
-                y = round(math.tan(-1 * theta * math.pi / 180), 2)
-                print(f"top left arc {theta}")
-
-            return Vector(x, y)
+                y = math.tan(-1 * theta * math.pi / 180)
 
         # --- IF BALL HITS FROM BELOW ---
         else:
@@ -258,10 +249,6 @@ class PlayState(IState):
                 x = 1.0
                 y = 0.0
 
-            elif theta == 90:
-                x = 0.0
-                y = 1.0
-
             elif theta == 180:
                 x = -1.0
                 y = 0.0
@@ -273,63 +260,44 @@ class PlayState(IState):
             # bottom-right arc
             elif (theta >= 0 and theta < 45) or (theta >= 315 and theta < 360):
                 x = 1.0
-                y = round(math.tan(theta * math.pi / 180), 2)
-                print(f"bottom right arc {theta}")
+                y = math.tan(theta * math.pi / 180)
 
             # bottom-left arc
             elif theta >= 135 and theta < 225:
                 x = -1.0
-                y = round(math.tan(-1 * theta * math.pi / 180), 2)
-                print(f"bottom left arc {theta}")
+                y = math.tan(-1 * theta * math.pi / 180)
 
             # bottom-center arc
             elif theta >= 225 and theta < 315:
-                x = -1 * round(1 / math.tan(theta * math.pi / 180), 2)
+                x = -1 * 1 / math.tan(theta * math.pi / 180)
                 y = -1.0
-                print(f"bottom center arc {theta}")
 
-            return Vector(x, y)
+        # trapped ball bug fix and gameplay tuning
+        if abs(x) < 0.2:
+            if x > 0:
+                x = 0.2
+            else:
+                x = -0.2
 
-    def vectorise(self, theta: float) -> Vector:
-        x: float = 0
-        y: float = 0
+        if abs(y) < 0.2:
+            if y > 0:
+                y = 0.2
+            else:
+                y = -0.2
 
-        # right side
-        if (theta >= 0 and theta < math.pi / 4) or (
-            theta >= 7 * math.pi / 4 and theta < 8 * math.pi / 4
-        ):
-            x = 1.0
-            y = round(math.tan(theta), 2)
+        return Vector(x, -y)
 
-        # top side
-        elif theta >= math.pi / 4 and theta < 3 * math.pi / 4:
-            x = round(1 / math.tan(theta), 2)
-            y = 1.0
-
-        # left side
-        elif theta >= 3 * math.pi / 4 and theta < 5 * math.pi / 4:
-            x = -1.0
-            y = round(math.tan(theta), 2)
-
-        # bottom side
-        elif theta >= 5 * math.pi / 4 and theta < 7 * math.pi / 4:
-            x = round(1 / math.tan(theta), 2)
-            y = -1.0
-
-        return Vector(x, y)
-
-    def bounce2(self, ball: Ball, obstacle: GameObject) -> None:
-
-        # angle between ball and block origins
+    def bounce_bat(self, ball: Ball, obstacle: GameObject) -> None:
         dy: int = ball.y - obstacle.y
         dx: int = ball.x - obstacle.x
         theta: float = math.atan2(dy, dx)
+        bounce_vector: Vector = self.vectorise_deg(theta)
+        ball.direction = bounce_vector
 
-        # print(theta * 180 / math.pi)
-        print(self.vectorise_deg(theta))
-        print("")
+        # change speed. further away from bat center is faster, vice versa
+        ball.speed = 0.3 + ((abs(bounce_vector.x) + abs(bounce_vector.y)) / 2) * 0.3
 
-    def bounce(self, x: Ball, hitside: Hitside) -> None:
+    def bounce_block(self, x: Ball, hitside: Hitside) -> None:
         # REMEMBER: down is positive in screen coords
         if hitside == Hitside.top:
             x.y -= int(0.5 * x.h)
