@@ -289,8 +289,6 @@ class PlayState(IState):
                 bounce_vector.y = -0.2
 
         ball.direction = bounce_vector
-
-        # change speed. further away from bat center is faster, vice versa
         ball.speed = 0.3 + ((abs(bounce_vector.x) + abs(bounce_vector.y)) / 2) * 0.2
 
     def bounce_block(self, x: Ball, hitside: Hitside) -> None:
