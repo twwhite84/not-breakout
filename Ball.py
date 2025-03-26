@@ -10,7 +10,7 @@ class Ball(GameObject):
     ):
         super().__init__(x, y, w, h, color)
         self.speed: float = 0.3
-        self.direction: Vector = Vector(1, 1)
+        self.direction: Vector = Vector(0, 1)
 
     def render(self, renderer: sdl2.SDL_Renderer) -> None:
         super().render(renderer)

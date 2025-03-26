@@ -11,6 +11,7 @@ import sdl2
 import ctypes
 from StateMachine import StateMachine, StateCode
 from enum import Enum
+from Vector import Vector
 
 
 class Hitside(Enum):
@@ -47,7 +48,7 @@ class PlayState(IState):
         # player
         self.player = Player(
             x=int(self.screen_width * 0.5),
-            y=self.screen_height - 50,
+            y=self.screen_height - 250,
             w=100,
             h=20,
             color=Colors.WHITE,
@@ -57,7 +58,7 @@ class PlayState(IState):
         ball_diameter = 20
         self.ball = Ball(
             x=int(self.screen_width * 0.5),
-            y=int(self.screen_height * 0.5 - ball_diameter * 0.5),
+            y=int(self.screen_height * 0.5 - ball_diameter * 0.5) + 200,
             w=ball_diameter,
             h=ball_diameter,
             color=Colors.CYAN,
@@ -88,6 +89,7 @@ class PlayState(IState):
                 self.player.x += int(self.player.speed * et)
 
         # ball collision -- wall
+
         if self.ball.x >= self.screen_width:
             self.ball.direction.x *= -1
             self.ball.x -= int(self.ball.w * 0.5)
@@ -97,15 +99,20 @@ class PlayState(IState):
             self.ball.x += int(self.ball.w * 0.5)
 
         if self.ball.y >= self.screen_height:
-            self.fsm.changeState(StateCode.INTRO)
+            # self.fsm.changeState(StateCode.INTRO)
+            self.ball.direction.y *= -1
+            self.ball.y -= int(self.ball.h * 0.5)
 
         if self.ball.y <= 0:
             self.ball.direction.y *= -1
             self.ball.y += int(self.ball.h * 0.5)
 
         # ball collision -- player
+        # if self.isCollision(self.ball, self.player):
+        # self.bounce(self.ball, self.findHitside(self.ball, self.player))
+
         if self.isCollision(self.ball, self.player):
-            self.bounce(self.ball, self.findHitside(self.ball, self.player))
+            self.bounce2(self.ball, self.player)
 
         # ball collision -- block
         for block in self.blocks:
@@ -190,6 +197,75 @@ class PlayState(IState):
         if ang > (-ang_side_portion) and ang <= (ang_side_portion):
             return Hitside.right
         return Hitside.left
+
+    def vectorise(self, theta: float) -> Vector:
+        x: float = 0
+        y: float = 0
+
+        if theta < 0:
+            theta = 2 * math.pi + theta
+
+        # right side
+        if (theta >= 0 and theta < math.pi / 4) or (
+            theta >= 7 * math.pi / 4 and theta < 8 * math.pi / 4
+        ):
+            x = 1.0
+            y = round(math.tan(theta), 2)
+
+        # top side
+        elif theta >= math.pi / 4 and theta < 3 * math.pi / 4:
+            x = round(1 / math.tan(theta), 2)
+            y = 1.0
+
+        # left side
+        elif theta >= 3 * math.pi / 4 and theta < 5 * math.pi / 4:
+            x = -1.0
+            y = round(math.tan(theta), 2)
+
+        # bottom side
+        elif theta >= 5 * math.pi / 4 and theta < 7 * math.pi / 4:
+            x = round(1 / math.tan(theta), 2)
+            y = -1.0
+
+        return Vector(x, y)
+
+    def bounce2(self, ball: Ball, obstacle: GameObject) -> None:
+
+        # angle between ball and block origins
+        dy = ball.y - obstacle.y
+        dx = ball.x - obstacle.x
+        theta_raw = math.atan2(dy, dx) * 180 / math.pi
+        bounce_theta = 0.0
+        if theta_raw < 0:
+            bounce_theta = theta_raw * -1
+        else:
+            bounce_theta = 360 - theta_raw
+
+        # print(f"theta_raw: {theta_raw}")
+        print(f"bounce_theta: {bounce_theta}")
+
+        print("")
+        # if theta_raw < 0:
+        #     theta_adj = theta_raw + 360
+        #     print(f"theta_adj: {theta_adj}")
+
+        # print(self.vectorise(theta_raw))
+        # print("")
+        # theta_fixed = theta
+        # if theta < 0:
+        #     theta_fixed = 2 * math.pi + theta
+        # print(
+        #     f"rawrad: {theta} rawdeg: {theta*180/math.pi} rad: {theta_fixed}, deg: {theta_fixed * 180 / math.pi}"
+        # )
+
+        # v: Vector = self.vectorise(theta)
+        # if theta < 0:
+        # theta += 2 * math.pi
+
+        # print(v)
+        # print("\n")
+
+        # if ang was straight down, ie pi/2, then bounce straight up
 
     def bounce(self, x: Ball, hitside: Hitside) -> None:
         # REMEMBER: down is positive in screen coords
